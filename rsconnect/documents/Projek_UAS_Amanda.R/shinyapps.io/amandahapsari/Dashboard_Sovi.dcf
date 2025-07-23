@@ -1,0 +1,12 @@
+name: Dashboard_Sovi
+title: Dashboard_Sovi
+username: amandahapsari
+account: amandahapsari
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15107989
+bundleId: 10659238
+url: https://amandahapsari.shinyapps.io/Dashboard_Sovi/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
