@@ -1,3 +1,12 @@
+---
+title: "UAS Komputasi Statistik"
+author: "Amanda Tri Hapsari (222312966/2KS3)"
+date: "2025-07-23"
+output: pdf_document
+---
+
+# Packages
+```{r}
 library(shiny)
 library(shinydashboard)
 library(bslib)
@@ -17,14 +26,22 @@ library(sp)
 library(tmap)
 library(knitr)
 library(rmarkdown)
+```
 
+
+# Load Data
+```{r}
 # Load GeoJSON data
 sovi_geojson <- geojson_read("https://raw.githubusercontent.com/amandatrih/projek-dashboard/main/sovi_data.geojson", what = "sp")
 sovi_data <- as.data.frame(sovi_geojson@data)
 
 # Keep distance matrix for now (if still needed)
 distance_matrix <- read_csv("https://raw.githubusercontent.com/bmlmcmc/naspaclust/main/data/distance.csv")
+```
 
+
+# CSS
+```{r}
 my_theme <- bs_theme(
   bg = "#191D24",
   fg = "#EFF7FF",
@@ -455,7 +472,11 @@ p {
 +  color: #9EF09E !important;
 +}
 "
+```
 
+
+# UI
+```{r}
 ui <- dashboardPage(
   skin = "blue",
   dashboardHeader(title = "SSA Dashboard"),
@@ -477,9 +498,9 @@ ui <- dashboardPage(
       tabItem(tabName = "beranda",
               fluidRow(
                 column(12,
-                  div(class = "metadata-card",
-                    h2("SELAMAT DATANG DI SELF-SERVICE ANALYTIC DASHBOARD", style = "color: #9EF09E; font-weight: bold; text-align:center;"),
-                  )
+                       div(class = "metadata-card",
+                           h2("SELAMAT DATANG DI SELF-SERVICE ANALYTIC DASHBOARD", style = "color: #9EF09E; font-weight: bold; text-align:center;"),
+                       )
                 )
               ),
               fluidRow(
@@ -490,73 +511,73 @@ ui <- dashboardPage(
               ),
               fluidRow(
                 column(12,
-                  div(class = "metadata-card",
-                    h4("Tujuan Dashboard:", style = "color: #51CD37; font-weight:bold;"),
-                    tags$ul(
-                      tags$li("Menyediakan alat bantu analisis berbasis data yang mudah digunakan oleh akademisi, peneliti, maupun pengambil kebijakan, khususnya dalam konteks kerentanan sosial."),
-                      tags$li("Menyajikan pola kerentanan sosial secara visual, interaktif, dan terstruktur melalui grafik statistik, peta tematik, serta tabel eksploratif."),
-                      tags$li(HTML("Mendukung proses pembelajaran dan pengembangan keterampilan dalam penerapan <b>komputasi statistik</b> dan sistem informasi berbasis data terbuka dengan studi kasus nyata dari data SOVI."))
-                    )
-                  )
+                       div(class = "metadata-card",
+                           h4("Tujuan Dashboard:", style = "color: #51CD37; font-weight:bold;"),
+                           tags$ul(
+                             tags$li("Menyediakan alat bantu analisis berbasis data yang mudah digunakan oleh akademisi, peneliti, maupun pengambil kebijakan, khususnya dalam konteks kerentanan sosial."),
+                             tags$li("Menyajikan pola kerentanan sosial secara visual, interaktif, dan terstruktur melalui grafik statistik, peta tematik, serta tabel eksploratif."),
+                             tags$li(HTML("Mendukung proses pembelajaran dan pengembangan keterampilan dalam penerapan <b>komputasi statistik</b> dan sistem informasi berbasis data terbuka dengan studi kasus nyata dari data SOVI."))
+                           )
+                       )
                 )
               ),
               fluidRow(
                 column(12,
-                  div(class = "metadata-card",
-                    h4("Fitur Dashboard:", style = "color: #51CD37; font-weight:bold;"),
-                    tags$table(class = "table table-bordered table-hover table-dark", style = "width:100%; background-color:#232935; color:#EFF7FF;",
-                      tags$tr(tags$th("Manajemen Data:"), tags$td("Kategorisasi data kontinyu")),
-                      tags$tr(tags$th("Eksplorasi Data:"), tags$td("Statistik deskriptif, visualisasi, peta")),
-                      tags$tr(tags$th("Uji Asumsi:"), tags$td("Uji normalitas dan homogenitas")),
-                      tags$tr(tags$th("Statistik Inferensia:"), tags$td("Uji hipotesis untuk 1 dan 2 sampel")),
-                      tags$tr(tags$th("ANOVA:"), tags$td("Analisis varian satu dan dua arah")),
-                      tags$tr(tags$th("Regresi Linear Berganda:"), tags$td("Analisis regresi dengan uji asumsi"))
-                    )
-                  )
+                       div(class = "metadata-card",
+                           h4("Fitur Dashboard:", style = "color: #51CD37; font-weight:bold;"),
+                           tags$table(class = "table table-bordered table-hover table-dark", style = "width:100%; background-color:#232935; color:#EFF7FF;",
+                                      tags$tr(tags$th("Manajemen Data:"), tags$td("Kategorisasi data kontinyu")),
+                                      tags$tr(tags$th("Eksplorasi Data:"), tags$td("Statistik deskriptif, visualisasi, peta")),
+                                      tags$tr(tags$th("Uji Asumsi:"), tags$td("Uji normalitas dan homogenitas")),
+                                      tags$tr(tags$th("Statistik Inferensia:"), tags$td("Uji hipotesis untuk 1 dan 2 sampel")),
+                                      tags$tr(tags$th("ANOVA:"), tags$td("Analisis varian satu dan dua arah")),
+                                      tags$tr(tags$th("Regresi Linear Berganda:"), tags$td("Analisis regresi dengan uji asumsi"))
+                           )
+                       )
                 )
               ),
               fluidRow(
                 column(12,
-                  div(class = "metadata-card",
-                    h4("Metadata:", style = "color: #51CD37; font-weight:bold;"),
-                    tags$div(
-                      h5("Informasi Dataset:", style = "color:#9EF09E; font-weight:bold;"),
-                      tags$ul(
-                        tags$li("Dataset: Data Indeks Kerentanan Sosial (SoVI)"),
-                        tags$li(HTML('Sumber: <a href="https://raw.githubusercontent.com/bmlmcmc/naspaclust/main/data/sovi_data.csv" target="_blank">sovi_data.csv</a>')),
-                        tags$li(HTML('Dataset SoVI + Spasial: <a href="https://raw.githubusercontent.com/amandatrih/projek-dashboard/main/sovi_data.geojson" target="_blank">sovi_data.geojson</a>')),
-                        tags$li(HTML('Matrik Penimbang Jarak: <a href="https://raw.githubusercontent.com/bmlmcmc/naspaclust/main/data/distance.csv" target="_blank">distance.csv</a>')),
-                        tags$li(HTML('Referensi Metadata: <a href="https://www.sciencedirect.com/science/article/pii/S2352340921010180" target="_blank">link</a>'))
-                      )
-                    ),
-                    h5("Informasi Variabel:", style = "color:#9EF09E; font-weight:bold; margin-top:15px;"),
-                    DT::dataTableOutput("tabel_varinfo")
-                  )
+                       div(class = "metadata-card",
+                           h4("Metadata:", style = "color: #51CD37; font-weight:bold;"),
+                           tags$div(
+                             h5("Informasi Dataset:", style = "color:#9EF09E; font-weight:bold;"),
+                             tags$ul(
+                               tags$li("Dataset: Data Indeks Kerentanan Sosial (SoVI)"),
+                               tags$li(HTML('Sumber: <a href="https://raw.githubusercontent.com/bmlmcmc/naspaclust/main/data/sovi_data.csv" target="_blank">sovi_data.csv</a>')),
+                               tags$li(HTML('Dataset SoVI + Spasial: <a href="https://raw.githubusercontent.com/amandatrih/projek-dashboard/main/sovi_data.geojson" target="_blank">sovi_data.geojson</a>')),
+                               tags$li(HTML('Matrik Penimbang Jarak: <a href="https://raw.githubusercontent.com/bmlmcmc/naspaclust/main/data/distance.csv" target="_blank">distance.csv</a>')),
+                               tags$li(HTML('Referensi Metadata: <a href="https://www.sciencedirect.com/science/article/pii/S2352340921010180" target="_blank">link</a>'))
+                             )
+                           ),
+                           h5("Informasi Variabel:", style = "color:#9EF09E; font-weight:bold; margin-top:15px;"),
+                           DT::dataTableOutput("tabel_varinfo")
+                       )
                 )
               ),
               fluidRow(
                 column(12,
-                  div(class = "metadata-card",
-                    h4("Informasi Pengembang:", style = "color: #51CD37; font-weight:bold;"),
-                    fluidRow(
-                      column(3,
-                        tags$img(src = "amanda.jpg", style = "width:100%; max-width:180px; aspect-ratio:1/1; border-radius:50%; border:2px solid #9EF09E; object-fit:cover;", onerror = "this.src='https://ui-avatars.com/api/?name=A+T+Hapsari&background=232935&color=9EF09E&size=180'")
-                      ),
-                      column(9,
-                        tags$div(style="margin-top:10px;",
-                          tags$b("Nama : Amanda Tri Hapsari"), tags$br(),
-                          "NIM : 222312966", tags$br(),
-                          "Kelas : 2KS3", tags$br(),
-                          "Institusi : Politeknik Statistika STIS"
-                        )
-                      )
-                    ),
-                    div(style="margin-top:15px;",
-                      p("Dashboard ini dibuat untuk memenuhi UAS Mata Kuliah Komputasi Statistik"),
-                      p("Program Studi DIV Komputasi Statistik – Politeknik Statistika STIS"),
-                      p("Semester Genap TA. 2024/2025")
-                    )
-                  )
+                       div(class = "metadata-card",
+                           h4("Informasi Pengembang:", style = "color: #51CD37; font-weight:bold;"),
+                           fluidRow(
+                             column(3,
+                                    tags$img(src = "amanda.jpg", style = "width:100%; max-width:180px; aspect-ratio:1/1; border-radius:50%; border:2px solid #9EF09E; object-fit:cover;", onerror = "this.src='https://ui-avatars.com/api/?name=A+T+Hapsari&background=232935&color=9EF09E&size=180'")
+                             ),
+                             column(9,
+                                    tags$div(style="margin-top:10px;",
+                                             tags$b("Nama : Amanda Tri Hapsari"), tags$br(),
+                                             "NIM : 222312966", tags$br(),
+                                             "Kelas : 2KS3", tags$br(),
+                                             "Institusi : Politeknik Statistika STIS"
+                                    )
+                             )
+                           ),
+                           div(style="margin-top:15px;",
+                               p("Dashboard ini dibuat untuk memenuhi UAS Mata Kuliah Komputasi Statistik"),
+                               p("Program Studi DIV Komputasi Statistik – Politeknik Statistika STIS"),
+                               p("Semester Genap TA. 2024/2025")
+                           )
+                       )
                 )
               )
       ),
@@ -592,9 +613,9 @@ ui <- dashboardPage(
                            checkboxInput("show_original", "Tampilkan Data Asli", value = TRUE),
                            checkboxInput("show_modified", "Tampilkan Data Setelah Kategorisasi", value = FALSE),
                            radioButtons("display_columns", "Kolom yang Ditampilkan:",
-                                       choices = list("Semua Kolom" = "all",
-                                                      "Hanya Kolom Kategorisasi" = "categorized_only"),
-                                       selected = "all")
+                                        choices = list("Semua Kolom" = "all",
+                                                       "Hanya Kolom Kategorisasi" = "categorized_only"),
+                                        selected = "all")
                        )
                 ),
                 
@@ -658,9 +679,9 @@ ui <- dashboardPage(
                            conditionalPanel(
                              condition = "input.explore_type == 'map' && input.map_type == 'cluster'",
                              selectInput("cluster_vars", "Pilih Variabel untuk Clustering:", 
-                                        choices = NULL, multiple = TRUE),
+                                         choices = NULL, multiple = TRUE),
                              numericInput("n_clusters", "Jumlah Cluster (k):", 
-                                         value = 3, min = 2, max = 10)
+                                          value = 3, min = 2, max = 10)
                            ),
                            actionButton("generate_exploration", "Buat Analisis", class = "btn-success")
                        )
@@ -835,9 +856,9 @@ ui <- dashboardPage(
                            conditionalPanel(
                              condition = "input.inference_type.indexOf('two') == 0",
                              selectInput("test_cat", "Hipotesis alternatif:",
-                                          choices = list("Tidak sama dengan",
-                                                         "Kurang dari",
-                                                         "Lebih dari"))),
+                                         choices = list("Tidak sama dengan",
+                                                        "Kurang dari",
+                                                        "Lebih dari"))),
                            
                            numericInput("alpha_level", "Tingkat Signifikansi:", value = 0.05, min = 0.01, max = 0.10, step = 0.01),
                            
@@ -942,7 +963,11 @@ ui <- dashboardPage(
     )
   )
 )
+```
 
+
+# Server
+```{r}
 server <- function(input, output, session) {
   
   # Reactive values
@@ -1050,7 +1075,7 @@ server <- function(input, output, session) {
     }
   })
   
-
+  
   
   output$categorization_table <- DT::renderDataTable({
     if (!is.null(values$modified_data)) {
@@ -1070,7 +1095,7 @@ server <- function(input, output, session) {
           # Get breaks information
           if (input$categorize_method == "equal") {
             breaks <- seq(min(var_data, na.rm = TRUE), max(var_data, na.rm = TRUE), 
-                         length.out = input$num_categories + 1)
+                          length.out = input$num_categories + 1)
           } else if (input$categorize_method == "quantile") {
             breaks <- quantile(var_data, probs = seq(0, 1, length.out = input$num_categories + 1), na.rm = TRUE)
           } else {
@@ -1099,8 +1124,8 @@ server <- function(input, output, session) {
         }
         
         DT::datatable(summary_table, 
-                     options = list(pageLength = 10, scrollX = TRUE),
-                     caption = paste("Tabel Kategorisasi Variabel:", input$var_to_categorize))
+                      options = list(pageLength = 10, scrollX = TRUE),
+                      caption = paste("Tabel Kategorisasi Variabel:", input$var_to_categorize))
       }
     }
   })
@@ -1257,7 +1282,7 @@ server <- function(input, output, session) {
                 bringToFront = TRUE
               ),
               label = ~paste("Wilayah:", sovi_geojson@data$NAME, "<br>", 
-                            input$explore_var, ":", round(var_data, 2))
+                             input$explore_var, ":", round(var_data, 2))
             ) %>%
             addLegend(
               pal = pal,
@@ -1316,7 +1341,7 @@ server <- function(input, output, session) {
                 bringToFront = TRUE
               ),
               label = ~paste("Wilayah:", sovi_clustered@data$NAME, "<br>", 
-                            "Cluster:", Cluster)
+                             "Cluster:", Cluster)
             ) %>%
             addLegend(
               pal = pal,
@@ -1945,238 +1970,238 @@ server <- function(input, output, session) {
   )
   
   # =================== EKSPLORASI DATA DOWNLOAD HANDLERS ===================
-
-# 1. Download Plot Eksplorasi (JPG)
-output$download_exploration_plot <- downloadHandler(
-  filename = function() {
-    paste0("eksplorasi_plot_", Sys.Date(), ".jpg")
-  },
-  content = function(file) {
-    # Simpan plot terakhir sesuai tipe eksplorasi
-    if (input$explore_type == "hist") {
-      p <- ggplot(values$data, aes_string(x = input$explore_var)) +
-        geom_histogram(bins = 30, fill = "#9EF09E", color = "#232935") +
-        theme_minimal() +
-        labs(title = paste("Histogram dari", input$explore_var))
-    } else if (input$explore_type == "box") {
-      p <- ggplot(values$data, aes_string(y = input$explore_var)) +
-        geom_boxplot(fill = "#9EF09E", color = "#232935") +
-        theme_minimal() +
-        labs(title = paste("Boxplot dari", input$explore_var))
-    } else if (input$explore_type == "corr") {
-      numeric_data <- select_if(values$data, is.numeric)
-      cor_matrix <- cor(numeric_data, use = "complete.obs")
-      cor_df <- expand.grid(Var1 = rownames(cor_matrix), Var2 = colnames(cor_matrix))
-      cor_df$value <- as.vector(cor_matrix)
-      p <- ggplot(cor_df, aes(Var1, Var2, fill = value)) +
-        geom_tile() +
-        scale_fill_gradient2(low = "#FF5005", high = "#51CD37", mid = "#DADFE9", midpoint = 0) +
-        theme_minimal() +
-        labs(title = "Matriks Korelasi")
-    } else if (input$explore_type == "scatter") {
-      req(input$scatter_y)
-      p <- ggplot(values$data, aes_string(x = input$explore_var, y = input$scatter_y)) +
-        geom_point(color = "#9EF09E") +
-        geom_smooth(method = "lm", color = "#51CD37") +
-        theme_minimal() +
-        labs(title = paste("Plot Scatter:", input$explore_var, "vs", input$scatter_y))
-    } else {
-      # Untuk peta, tidak bisa diekspor langsung ke JPG, skip
+  
+  # 1. Download Plot Eksplorasi (JPG)
+  output$download_exploration_plot <- downloadHandler(
+    filename = function() {
+      paste0("eksplorasi_plot_", Sys.Date(), ".jpg")
+    },
+    content = function(file) {
+      # Simpan plot terakhir sesuai tipe eksplorasi
+      if (input$explore_type == "hist") {
+        p <- ggplot(values$data, aes_string(x = input$explore_var)) +
+          geom_histogram(bins = 30, fill = "#9EF09E", color = "#232935") +
+          theme_minimal() +
+          labs(title = paste("Histogram dari", input$explore_var))
+      } else if (input$explore_type == "box") {
+        p <- ggplot(values$data, aes_string(y = input$explore_var)) +
+          geom_boxplot(fill = "#9EF09E", color = "#232935") +
+          theme_minimal() +
+          labs(title = paste("Boxplot dari", input$explore_var))
+      } else if (input$explore_type == "corr") {
+        numeric_data <- select_if(values$data, is.numeric)
+        cor_matrix <- cor(numeric_data, use = "complete.obs")
+        cor_df <- expand.grid(Var1 = rownames(cor_matrix), Var2 = colnames(cor_matrix))
+        cor_df$value <- as.vector(cor_matrix)
+        p <- ggplot(cor_df, aes(Var1, Var2, fill = value)) +
+          geom_tile() +
+          scale_fill_gradient2(low = "#FF5005", high = "#51CD37", mid = "#DADFE9", midpoint = 0) +
+          theme_minimal() +
+          labs(title = "Matriks Korelasi")
+      } else if (input$explore_type == "scatter") {
+        req(input$scatter_y)
+        p <- ggplot(values$data, aes_string(x = input$explore_var, y = input$scatter_y)) +
+          geom_point(color = "#9EF09E") +
+          geom_smooth(method = "lm", color = "#51CD37") +
+          theme_minimal() +
+          labs(title = paste("Plot Scatter:", input$explore_var, "vs", input$scatter_y))
+      } else {
+        # Untuk peta, tidak bisa diekspor langsung ke JPG, skip
+        p <- NULL
+      }
+      if (!is.null(p)) {
+        ggsave(file, plot = p, device = "jpeg", width = 8, height = 5)
+      } else {
+        file.create(file) # Buat file kosong jika tidak ada plot
+      }
+    }
+  )
+  
+  # 2. Download Tabel Eksplorasi (CSV)
+  output$download_exploration_table <- downloadHandler(
+    filename = function() {
+      paste0("eksplorasi_tabel_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(values$data, file, row.names = FALSE)
+    }
+  )
+  
+  # 3. Download Laporan Eksplorasi (PDF)
+  output$download_exploration_report <- downloadHandler(
+    filename = function() {
+      paste0("laporan_eksplorasi_", Sys.Date(), ".pdf")
+    },
+    content = function(file) {
+      temp_md <- tempfile(fileext = ".md")
+      temp_plot <- tempfile(fileext = ".png")
+      interpretasi <- paste(
+        "Analisis eksplorasi untuk variabel:", input$explore_var, 
+        "- Analisis", input$explore_type, "memberikan wawasan tentang distribusi dan karakteristik data."
+      )
+      # Buat plot sesuai tipe eksplorasi
       p <- NULL
+      if (input$explore_type == "hist") {
+        p <- ggplot(values$data, aes_string(x = input$explore_var)) +
+          geom_histogram(bins = 30, fill = "#9EF09E", color = "#232935") +
+          theme_minimal() +
+          labs(title = paste("Histogram dari", input$explore_var))
+      } else if (input$explore_type == "box") {
+        p <- ggplot(values$data, aes_string(y = input$explore_var)) +
+          geom_boxplot(fill = "#9EF09E", color = "#232935") +
+          theme_minimal() +
+          labs(title = paste("Boxplot dari", input$explore_var))
+      } else if (input$explore_type == "corr") {
+        numeric_data <- select_if(values$data, is.numeric)
+        cor_matrix <- cor(numeric_data, use = "complete.obs")
+        cor_df <- expand.grid(Var1 = rownames(cor_matrix), Var2 = colnames(cor_matrix))
+        cor_df$value <- as.vector(cor_matrix)
+        p <- ggplot(cor_df, aes(Var1, Var2, fill = value)) +
+          geom_tile() +
+          scale_fill_gradient2(low = "#FF5005", high = "#51CD37", mid = "#DADFE9", midpoint = 0) +
+          theme_minimal() +
+          labs(title = "Matriks Korelasi")
+      } else if (input$explore_type == "scatter") {
+        req(input$scatter_y)
+        p <- ggplot(values$data, aes_string(x = input$explore_var, y = input$scatter_y)) +
+          geom_point(color = "#9EF09E") +
+          geom_smooth(method = "lm", color = "#51CD37") +
+          theme_minimal() +
+          labs(title = paste("Plot Scatter:", input$explore_var, "vs", input$scatter_y))
+      }
+      # Simpan plot jika ada
+      if (!is.null(p)) {
+        ggsave(temp_plot, plot = p, device = "png", width = 7, height = 4)
+        plot_md <- paste0("![](", temp_plot, ")")
+      } else {
+        plot_md <- "(Plot tidak tersedia untuk tipe ini)"
+      }
+      lines <- c(
+        "# Laporan Eksplorasi Data",
+        paste0("## Variabel: ", input$explore_var),
+        paste0("## Tipe Analisis: ", input$explore_type),
+        "",
+        "### Statistik Deskriptif:",
+        capture.output(
+          if (is.numeric(values$data[[input$explore_var]])) summary(values$data[[input$explore_var]]) else table(values$data[[input$explore_var]])
+        ),
+        "",
+        "### Grafik Hasil Eksplorasi:",
+        plot_md,
+        "",
+        "### Interpretasi:",
+        interpretasi
+      )
+      writeLines(lines, temp_md)
+      rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
     }
-    if (!is.null(p)) {
-      ggsave(file, plot = p, device = "jpeg", width = 8, height = 5)
-    } else {
-      file.create(file) # Buat file kosong jika tidak ada plot
+  )
+  
+  # 4. Download Halaman Eksplorasi Lengkap (PDF)
+  output$download_exploration_page <- downloadHandler(
+    filename = function() {
+      paste0("halaman_eksplorasi_", Sys.Date(), ".pdf")
+    },
+    content = function(file) {
+      temp_md <- tempfile(fileext = ".md")
+      temp_plot <- tempfile(fileext = ".png")
+      interpretasi <- paste(
+        "Analisis eksplorasi untuk variabel:", input$explore_var, 
+        "- Analisis", input$explore_type, "memberikan wawasan tentang distribusi dan karakteristik data."
+      )
+      # Buat plot sesuai tipe eksplorasi
+      p <- NULL
+      if (input$explore_type == "hist") {
+        p <- ggplot(values$data, aes_string(x = input$explore_var)) +
+          geom_histogram(bins = 30, fill = "#9EF09E", color = "#232935") +
+          theme_minimal() +
+          labs(title = paste("Histogram dari", input$explore_var))
+      } else if (input$explore_type == "box") {
+        p <- ggplot(values$data, aes_string(y = input$explore_var)) +
+          geom_boxplot(fill = "#9EF09E", color = "#232935") +
+          theme_minimal() +
+          labs(title = paste("Boxplot dari", input$explore_var))
+      } else if (input$explore_type == "corr") {
+        numeric_data <- select_if(values$data, is.numeric)
+        cor_matrix <- cor(numeric_data, use = "complete.obs")
+        cor_df <- expand.grid(Var1 = rownames(cor_matrix), Var2 = colnames(cor_matrix))
+        cor_df$value <- as.vector(cor_matrix)
+        p <- ggplot(cor_df, aes(Var1, Var2, fill = value)) +
+          geom_tile() +
+          scale_fill_gradient2(low = "#FF5005", high = "#51CD37", mid = "#DADFE9", midpoint = 0) +
+          theme_minimal() +
+          labs(title = "Matriks Korelasi")
+      } else if (input$explore_type == "scatter") {
+        req(input$scatter_y)
+        p <- ggplot(values$data, aes_string(x = input$explore_var, y = input$scatter_y)) +
+          geom_point(color = "#9EF09E") +
+          geom_smooth(method = "lm", color = "#51CD37") +
+          theme_minimal() +
+          labs(title = paste("Plot Scatter:", input$explore_var, "vs", input$scatter_y))
+      }
+      # Simpan plot jika ada
+      if (!is.null(p)) {
+        ggsave(temp_plot, plot = p, device = "png", width = 7, height = 4)
+        plot_md <- paste0("![](", temp_plot, ")")
+      } else {
+        plot_md <- "(Plot tidak tersedia untuk tipe ini)"
+      }
+      # Tabel preview sesuai tipe eksplorasi
+      preview_n <- 8
+      if (input$explore_type == "hist" || input$explore_type == "box" || input$explore_type == "map") {
+        data_preview <- data.frame(No = 1:preview_n, values$data[[input$explore_var]][1:preview_n])
+        colnames(data_preview)[2] <- input$explore_var
+      } else if (input$explore_type == "scatter") {
+        data_preview <- data.frame(No = 1:preview_n,
+                                   values$data[[input$explore_var]][1:preview_n],
+                                   values$data[[input$scatter_y]][1:preview_n])
+        colnames(data_preview)[2:3] <- c(input$explore_var, input$scatter_y)
+      } else if (input$explore_type == "corr") {
+        numeric_data <- select_if(values$data, is.numeric)
+        data_preview <- data.frame(No = 1:preview_n, head(numeric_data, preview_n))
+      } else {
+        data_preview <- data.frame(No = 1:preview_n, values$data[[input$explore_var]][1:preview_n])
+        colnames(data_preview)[2] <- input$explore_var
+      }
+      # Buat header dan garis bawah satu kali
+      header_md <- paste0("| ", paste(names(data_preview), collapse = " | "), " |")
+      garis_md  <- paste0("|", paste(rep("---", ncol(data_preview)), collapse = "|"), "|")
+      baris_md  <- apply(data_preview, 1, function(row) paste("|", paste(row, collapse = " | "), "|"))
+      table_md  <- paste(c(header_md, garis_md, baris_md), collapse = "\n")
+      total_n <- nrow(values$data)
+      keterangan <- paste0("Tabel berikut hanya menampilkan sebagian data (", preview_n, " baris pertama) dari total ", total_n, " baris.\n")
+      lines <- c(
+        "# Halaman Eksplorasi Data",
+        paste0("## Variabel: ", input$explore_var),
+        paste0("## Tipe Analisis: ", input$explore_type),
+        "",
+        "### Statistik Deskriptif:",
+        capture.output(
+          if (is.numeric(values$data[[input$explore_var]])) summary(values$data[[input$explore_var]]) else table(values$data[[input$explore_var]])
+        ),
+        "",
+        "### Grafik Hasil Eksplorasi:",
+        plot_md,
+        "",
+        "### Tabel Data (Preview):",
+        keterangan,
+        table_md,
+        "",
+        "### Interpretasi:",
+        interpretasi
+      )
+      writeLines(lines, temp_md)
+      rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
     }
-  }
-)
-
-# 2. Download Tabel Eksplorasi (CSV)
-output$download_exploration_table <- downloadHandler(
-  filename = function() {
-    paste0("eksplorasi_tabel_", Sys.Date(), ".csv")
-  },
-  content = function(file) {
-    write.csv(values$data, file, row.names = FALSE)
-  }
-)
-
-# 3. Download Laporan Eksplorasi (PDF)
-output$download_exploration_report <- downloadHandler(
-  filename = function() {
-    paste0("laporan_eksplorasi_", Sys.Date(), ".pdf")
-  },
-  content = function(file) {
-    temp_md <- tempfile(fileext = ".md")
-    temp_plot <- tempfile(fileext = ".png")
-    interpretasi <- paste(
-      "Analisis eksplorasi untuk variabel:", input$explore_var, 
-      "- Analisis", input$explore_type, "memberikan wawasan tentang distribusi dan karakteristik data."
-    )
-    # Buat plot sesuai tipe eksplorasi
-    p <- NULL
-    if (input$explore_type == "hist") {
-      p <- ggplot(values$data, aes_string(x = input$explore_var)) +
-        geom_histogram(bins = 30, fill = "#9EF09E", color = "#232935") +
-        theme_minimal() +
-        labs(title = paste("Histogram dari", input$explore_var))
-    } else if (input$explore_type == "box") {
-      p <- ggplot(values$data, aes_string(y = input$explore_var)) +
-        geom_boxplot(fill = "#9EF09E", color = "#232935") +
-        theme_minimal() +
-        labs(title = paste("Boxplot dari", input$explore_var))
-    } else if (input$explore_type == "corr") {
-      numeric_data <- select_if(values$data, is.numeric)
-      cor_matrix <- cor(numeric_data, use = "complete.obs")
-      cor_df <- expand.grid(Var1 = rownames(cor_matrix), Var2 = colnames(cor_matrix))
-      cor_df$value <- as.vector(cor_matrix)
-      p <- ggplot(cor_df, aes(Var1, Var2, fill = value)) +
-        geom_tile() +
-        scale_fill_gradient2(low = "#FF5005", high = "#51CD37", mid = "#DADFE9", midpoint = 0) +
-        theme_minimal() +
-        labs(title = "Matriks Korelasi")
-    } else if (input$explore_type == "scatter") {
-      req(input$scatter_y)
-      p <- ggplot(values$data, aes_string(x = input$explore_var, y = input$scatter_y)) +
-        geom_point(color = "#9EF09E") +
-        geom_smooth(method = "lm", color = "#51CD37") +
-        theme_minimal() +
-        labs(title = paste("Plot Scatter:", input$explore_var, "vs", input$scatter_y))
-    }
-    # Simpan plot jika ada
-    if (!is.null(p)) {
-      ggsave(temp_plot, plot = p, device = "png", width = 7, height = 4)
-      plot_md <- paste0("![](", temp_plot, ")")
-    } else {
-      plot_md <- "(Plot tidak tersedia untuk tipe ini)"
-    }
-    lines <- c(
-      "# Laporan Eksplorasi Data",
-      paste0("## Variabel: ", input$explore_var),
-      paste0("## Tipe Analisis: ", input$explore_type),
-      "",
-      "### Statistik Deskriptif:",
-      capture.output(
-        if (is.numeric(values$data[[input$explore_var]])) summary(values$data[[input$explore_var]]) else table(values$data[[input$explore_var]])
-      ),
-      "",
-      "### Grafik Hasil Eksplorasi:",
-      plot_md,
-      "",
-      "### Interpretasi:",
-      interpretasi
-    )
-    writeLines(lines, temp_md)
-    rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
-  }
-)
-
-# 4. Download Halaman Eksplorasi Lengkap (PDF)
-output$download_exploration_page <- downloadHandler(
-  filename = function() {
-    paste0("halaman_eksplorasi_", Sys.Date(), ".pdf")
-  },
-  content = function(file) {
-    temp_md <- tempfile(fileext = ".md")
-    temp_plot <- tempfile(fileext = ".png")
-    interpretasi <- paste(
-      "Analisis eksplorasi untuk variabel:", input$explore_var, 
-      "- Analisis", input$explore_type, "memberikan wawasan tentang distribusi dan karakteristik data."
-    )
-    # Buat plot sesuai tipe eksplorasi
-    p <- NULL
-    if (input$explore_type == "hist") {
-      p <- ggplot(values$data, aes_string(x = input$explore_var)) +
-        geom_histogram(bins = 30, fill = "#9EF09E", color = "#232935") +
-        theme_minimal() +
-        labs(title = paste("Histogram dari", input$explore_var))
-    } else if (input$explore_type == "box") {
-      p <- ggplot(values$data, aes_string(y = input$explore_var)) +
-        geom_boxplot(fill = "#9EF09E", color = "#232935") +
-        theme_minimal() +
-        labs(title = paste("Boxplot dari", input$explore_var))
-    } else if (input$explore_type == "corr") {
-      numeric_data <- select_if(values$data, is.numeric)
-      cor_matrix <- cor(numeric_data, use = "complete.obs")
-      cor_df <- expand.grid(Var1 = rownames(cor_matrix), Var2 = colnames(cor_matrix))
-      cor_df$value <- as.vector(cor_matrix)
-      p <- ggplot(cor_df, aes(Var1, Var2, fill = value)) +
-        geom_tile() +
-        scale_fill_gradient2(low = "#FF5005", high = "#51CD37", mid = "#DADFE9", midpoint = 0) +
-        theme_minimal() +
-        labs(title = "Matriks Korelasi")
-    } else if (input$explore_type == "scatter") {
-      req(input$scatter_y)
-      p <- ggplot(values$data, aes_string(x = input$explore_var, y = input$scatter_y)) +
-        geom_point(color = "#9EF09E") +
-        geom_smooth(method = "lm", color = "#51CD37") +
-        theme_minimal() +
-        labs(title = paste("Plot Scatter:", input$explore_var, "vs", input$scatter_y))
-    }
-    # Simpan plot jika ada
-    if (!is.null(p)) {
-      ggsave(temp_plot, plot = p, device = "png", width = 7, height = 4)
-      plot_md <- paste0("![](", temp_plot, ")")
-    } else {
-      plot_md <- "(Plot tidak tersedia untuk tipe ini)"
-    }
-    # Tabel preview sesuai tipe eksplorasi
-    preview_n <- 8
-    if (input$explore_type == "hist" || input$explore_type == "box" || input$explore_type == "map") {
-      data_preview <- data.frame(No = 1:preview_n, values$data[[input$explore_var]][1:preview_n])
-      colnames(data_preview)[2] <- input$explore_var
-    } else if (input$explore_type == "scatter") {
-      data_preview <- data.frame(No = 1:preview_n,
-                                 values$data[[input$explore_var]][1:preview_n],
-                                 values$data[[input$scatter_y]][1:preview_n])
-      colnames(data_preview)[2:3] <- c(input$explore_var, input$scatter_y)
-    } else if (input$explore_type == "corr") {
-      numeric_data <- select_if(values$data, is.numeric)
-      data_preview <- data.frame(No = 1:preview_n, head(numeric_data, preview_n))
-    } else {
-      data_preview <- data.frame(No = 1:preview_n, values$data[[input$explore_var]][1:preview_n])
-      colnames(data_preview)[2] <- input$explore_var
-    }
-    # Buat header dan garis bawah satu kali
-    header_md <- paste0("| ", paste(names(data_preview), collapse = " | "), " |")
-    garis_md  <- paste0("|", paste(rep("---", ncol(data_preview)), collapse = "|"), "|")
-    baris_md  <- apply(data_preview, 1, function(row) paste("|", paste(row, collapse = " | "), "|"))
-    table_md  <- paste(c(header_md, garis_md, baris_md), collapse = "\n")
-    total_n <- nrow(values$data)
-    keterangan <- paste0("Tabel berikut hanya menampilkan sebagian data (", preview_n, " baris pertama) dari total ", total_n, " baris.\n")
-    lines <- c(
-      "# Halaman Eksplorasi Data",
-      paste0("## Variabel: ", input$explore_var),
-      paste0("## Tipe Analisis: ", input$explore_type),
-      "",
-      "### Statistik Deskriptif:",
-      capture.output(
-        if (is.numeric(values$data[[input$explore_var]])) summary(values$data[[input$explore_var]]) else table(values$data[[input$explore_var]])
-      ),
-      "",
-      "### Grafik Hasil Eksplorasi:",
-      plot_md,
-      "",
-      "### Tabel Data (Preview):",
-      keterangan,
-      table_md,
-      "",
-      "### Interpretasi:",
-      interpretasi
-    )
-    writeLines(lines, temp_md)
-    rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
-  }
-)
+  )
   
   # Add %R% operator definition
   `%R%` <- function(x, y) {
     paste(rep(x, y), collapse = "")
   }
-
+  
   # =================== UJI ASUMSI DOWNLOAD HANDLERS ===================
-
+  
   # 1. Download Plot Uji Asumsi (JPG)
   output$download_assumption_plot <- downloadHandler(
     filename = function() {
@@ -2203,7 +2228,7 @@ output$download_exploration_page <- downloadHandler(
       }
     }
   )
-
+  
   # 2. Download Hasil Uji Asumsi (TXT)
   output$download_assumption_results <- downloadHandler(
     filename = function() {
@@ -2288,7 +2313,7 @@ output$download_exploration_page <- downloadHandler(
       rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
     }
   )
-
+  
   # 3. Download Halaman Uji Asumsi Lengkap (PDF)
   output$download_assumption_page <- downloadHandler(
     filename = function() {
@@ -2373,7 +2398,7 @@ output$download_exploration_page <- downloadHandler(
       rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
     }
   )
-
+  
   # =================== BERANDA SERVER (INFO BOX & TABEL VARIABEL) ===================
   output$box_prov <- renderValueBox({
     n_prov <- length(unique(sovi_data$nmprov))
@@ -2391,7 +2416,7 @@ output$download_exploration_page <- downloadHandler(
     n_row <- nrow(sovi_data)
     valueBox(n_row, "Total Baris", icon = icon("table"), color = "purple")
   })
-
+  
   # Tabel info variabel
   output$tabel_varinfo <- DT::renderDataTable({
     varinfo <- data.frame(
@@ -2426,7 +2451,7 @@ output$download_exploration_page <- downloadHandler(
     )
     DT::datatable(varinfo, options = list(dom = 't', pageLength = 8, scrollX = TRUE), rownames = FALSE)
   })
-
+  
   # Data Management Downloads
   output$download_mgmt_report <- downloadHandler(
     filename = function() {
@@ -2494,9 +2519,9 @@ output$download_exploration_page <- downloadHandler(
       rmarkdown::render(temp_md, output_format = "pdf_document", output_file = file)
     }
   )
-
+  
   # =================== STATISTIK INFERENSIA DOWNLOAD HANDLERS ===================
-
+  
   output$download_inference_plot <- downloadHandler(
     filename = function() {
       paste0("statistik_inferensia_plot_", Sys.Date(), ".jpg")
@@ -2575,7 +2600,7 @@ output$download_exploration_page <- downloadHandler(
       }
     }
   )
-
+  
   output$download_inference_results <- downloadHandler(
     filename = function() {
       paste0("statistik_inferensia_hasil_", Sys.Date(), ".pdf")
@@ -2603,7 +2628,7 @@ output$download_exploration_page <- downloadHandler(
       })
     }
   )
-
+  
   output$download_inference_page <- downloadHandler(
     filename = function() {
       paste0("halaman_statistik_inferensia_", Sys.Date(), ".pdf")
@@ -2631,9 +2656,9 @@ output$download_exploration_page <- downloadHandler(
       })
     }
   )
-
+  
   # =================== REGRESI LINEAR BERGANDA DOWNLOAD HANDLERS ===================
-
+  
   output$download_regression_plot <- downloadHandler(
     filename = function() {
       paste0("regresi_linear_plot_", Sys.Date(), ".jpg")
@@ -2655,7 +2680,7 @@ output$download_exploration_page <- downloadHandler(
       ggsave(file, plot = p, device = "jpeg", width = 8, height = 5)
     }
   )
-
+  
   output$download_regression_results <- downloadHandler(
     filename = function() {
       paste0("regresi_linear_hasil_", Sys.Date(), ".pdf")
@@ -2695,7 +2720,7 @@ output$download_exploration_page <- downloadHandler(
       })
     }
   )
-
+  
   output$download_regression_page <- downloadHandler(
     filename = function() {
       paste0("halaman_regresi_linear_", Sys.Date(), ".pdf")
@@ -2736,6 +2761,10 @@ output$download_exploration_page <- downloadHandler(
     }
   )
 }
+```
 
-# Run the application
+
+# Running App
+```{r}
 shinyApp(ui = ui, server = server)
+```
